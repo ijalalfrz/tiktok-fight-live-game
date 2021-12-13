@@ -43,7 +43,8 @@ export default class BootScene extends Scene {
   async create() {
     console.log(new URL(location.href).searchParams.get('token'));
     this.setUpImage();
-    this.addTimeEvent();
+    //this.addTimeEvent();
+    this.scene.start('PlayScene', { token: newToken });
   }
 
   addTimeEvent() {

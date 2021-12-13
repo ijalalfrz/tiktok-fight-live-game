@@ -1,0 +1,38 @@
+image: node:16.13.0
+
+variables:
+  APP_NAME: juego-1-pelea
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - install
+  - build
+  - deploy
+
+instalacion:
+  stage: install
+  only:
+    - develop
+  script:
+    - npm install
+
+construccion:
+  stage: build
+  only:
+    - develop
+  script:
+    - npm run build
+
+despliegue:
+  stage: deploy
+  only:
+    - develop
+  image: ruby:latest
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=$APP_NAME --api_key=$HEROKU_API_KEY

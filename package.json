@@ -1,0 +1,39 @@
+{
+  "name": "juego-1-pelea",
+  "version": "3.0.0",
+  "description": "Template for working with Phaser in a Vue project",
+  "author": "",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --modern --mode production",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "core-js": "^3.17.3",
+    "phaser": "^3.55.2",
+    "vue": "^3.2.12",
+    "axios": "^0.24.0",
+    "express": "^4.17.1",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.2.12",
+    "sass": "^1.41.1",
+    "sass-loader": "^8.0.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.2.12",
+    "express": "latest",
+    "sass": "^1.41.1",
+    "sass-loader": "^8.0.2"
+  },
+  "keywords": [
+    "vue",
+    "phaser",
+    "webpack",
+    "boilerplate",
+    "template"
+  ]
+}

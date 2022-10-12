@@ -1,10 +1,12 @@
 import { Scene } from 'phaser'
 import axios from 'axios';
+import Player from '../player/Player';
 
 const playerWidth = 40;
 const playerHeight = 94;
 let platforms;
 let player;
+let player2;
 let enemy;
 let hitPlayer;
 let hitEnemy;
@@ -30,6 +32,11 @@ let justDownPlayer;
 let justDownEnemy;
 let goingToMoveFromScene;
 let loadedEndAnimations;
+let p1Idle;
+let p1Run;
+let p1Jump;
+let p1Attack;
+let p1Slide;
 let setPlayerValuebar = (bar, percentage) => bar.scaleX = - percentage / 100;
 let setEnemyValuebar = (bar, percentage) => bar.scaleX = percentage / 100;
 
@@ -37,21 +44,63 @@ export default class PlayScene extends Scene {
 
   constructor () {
     super({ key: 'PlayScene' })
+    this.player1 = null;
+    this.player2 = null;
+  }
+  async preload() {
+    const characters = ['hunt1', 'king1', 'warrior1', 'warrior3', 'martial1']
+    const randomP1 = this.randomInteger(0, characters.length - 1)
+    const cP1 = characters[randomP1]
+    this.removeArray(cP1, characters)
+    const randomP2 = this.randomInteger(0, characters.length - 1)
+    const cP2 = characters[randomP2]
+    this.player1 = new Player(this,1, cP1, 2000, 70, 70)
+    this.player2 = new Player(this,2, cP2, 50, 70, 70)
+
+  }
+
+  randomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  removeArray(item, array) {
+    var index = array.indexOf(item);
+    if (index !== -1) {
+      array.splice(index, 1);
+    }
   }
 
   create () {
+  
     this.setUpSounds();
     this.initializeStatistics();
     this.setUpBackground();
     this.setUpHealthBars();
     this.setUpTexts();
     this.setUpPlatforms();
-    this.setUpPlayer();
+    // this.setUpPlayer();
+    // this.setUpPlayer2();
+    
     this.setUpInputKeys();
-    this.setUpEnemy();
-    this.setUpAnimationsPlayer();
-    this.setUpAnimationsEnemy();
-    this.addTimeEvent();
+    // this.setUpEnemy();
+    // this.setUpAnimationsPlayer();
+    // this.setUpAnimationsEnemy();
+    // this.addTimeEvent();
+    this.player1.buildCharacterAnimation(this)
+    this.player1.setUpHealthBar(this, 95, 80)
+    this.player1.character.addPlayerToScene(this, 300, 50)
+    this.player1.character.addPlatforms(this, platforms)
+    this.player1.showAliasText(this, 95, 105)
+    
+
+    this.player2.buildCharacterAnimation(this)
+    this.player2.setUpHealthBar(this, 425, 80)
+    this.player2.character.addPlayerToScene(this, 500, 50, true)
+    this.player2.character.addPlatforms(this, platforms)
+    this.player2.showAliasText(this, 540, 105)
+
+
+
   }
 
   init(data){
@@ -60,7 +109,7 @@ export default class PlayScene extends Scene {
 
   update() {
     this.updatePlayersMovement(keyW, keyA, keyD, keyM, keyN);
-    this.updatePlayersFlip(player, enemy);
+    // this.updatePlayersFlip(player2, enemy);
     this.updateSceneNavigation();
   }
 
@@ -100,102 +149,89 @@ export default class PlayScene extends Scene {
   }
 
   updatePlayersMovement(up, left, right, jumpkick, punch) {
-    if (this.avaliableHitJustDown(jumpkick)) {
-      justDownPlayer = true;
-      this.doAnim(player, 'jumpkick');
-      this.stopIfWalking(player);
-      this.setPlayerJumpkickTimeout();
-      setTimeout(() => {
-        if (this.enemyCanDoAnim()) {
-          justDownEnemy = true;
-          this.doAnim(enemy, 'jumpkick2');
-          this.stopIfWalking(enemy);
-          this.setEnemyJumpkickTimeout();
-        }
-      }, 500);
+
+    if (this.player1.avaliableHitJustDown(punch)) {
+      this.player1.character.attack1(this.player2)
     }
-    else if (this.avaliableHitJustDown(punch)) {
-      justDownPlayer = true;
-      this.doAnim(player, 'punch');
-      this.stopIfWalking(player);
-      this.setPlayerPunchTimeout();
-      setTimeout(() => {
-        if (this.enemyCanDoAnim()) {
-          justDownEnemy = true;
-          this.doAnim(enemy, 'punch2');
-          this.stopIfWalking(enemy);
-          this.setEnemyPunchTimeout();
-        }
-      }, 500);
+    if (this.player1.avaliableHitJustDown(jumpkick)) {
+      this.player1.character.attack3(this.player2)
     }
-    else if (this.avaliableJumpIsDown(up)) {
-      this.jump(player);
-      setTimeout(() => {
-        if (this.enemyCanDoAnim()) {
-          this.jump(enemy);
-        }
-      }, 500);
+
+    if (this.player1.avaliableSideIsDown(right) && this.player1.avaliableJumpIsDown(up)) {
+      this.player1.character.moveRight()
+      this.player1.character.jump()
+    } else if (this.player1.avaliableSideIsDown(left) && this.player1.avaliableJumpIsDown(up)) {
+      this.player1.character.moveLeft()
+      this.player1.character.jump()
+    } else if (this.player1.avaliableSideIsDown(left)) {
+      this.player1.character.moveLeft()
+    } else if (this.player1.avaliableSideIsDown(right)) {
+      this.player1.character.moveRight()
+    } else if (this.player1.avaliableJumpIsDown(up)) {
+      this.player1.character.jump()
+    } else if (this.player1.isPlayerDown()) {
+      this.player1.character.standing()
+      this.player1.character.stop()
+      // if (this.player1.needToMoveToEnemy(this.player2)) {
+      //   this.player1.character.moveRight()
+      // } else {
+      //   // this.player1.playerArrive()
+      // }
     } 
-    else if (this.avaliableSideIsDown(left)) {
-      this.doAnim(player, 'walk');
-      this.moveLeft(player);
-      setTimeout(() => {
-        if (this.enemyCanDoAnim()) {
-          this.doAnim(enemy, 'walk2');
-          this.moveRight(enemy);
-        }
-      }, 500);
+    
+  
+    if (this.player2.isPlayerDown()) {
+      this.player2.character.standing()
+      this.stop(this.player2.character.player)
     } 
-    else if (this.avaliableSideIsDown(right)) {
-      this.doAnim(player, 'walk');
-      this.moveRight(player);
-      setTimeout(() => {
-        if (this.enemyCanDoAnim()) {
-          this.doAnim(enemy, 'walk2');
-          this.moveLeft(enemy);
-        }
-      }, 500);
-    } 
-    else if (this.isAnyPlayerDown()) {
-      this.doIdlePlayers();
+
+    if (this.player2.isPlayerDead()) {
+      this.player2.character.death()
     }
-    else if (this.isAnyPlayerDead()) {
-      loadedEndAnimations = true;
-      this.stop(player);
-      this.stop(enemy);
-      if (lifePlayer <= 0) {
-        this.doAnim(player, 'die');
-        this.doAnim(enemy, 'win2');
-      } else {
-        this.doAnim(player, 'win');
-        this.doAnim(enemy, 'die2');
-      }
-    }
+
+
   }
 
   setUpPlayer() {
-    player = this.physics.add.sprite(100, 800, 'brawler');
-    player.setSize(playerWidth, playerHeight);
-    player.scaleX=2;
-    player.scaleY=2;
-    player.setCollideWorldBounds(true);
-    this.physics.add.collider(player, platforms);
+    player2 = this.physics.add.sprite(300, 100, 'warrior1');
+    // player2.getBottomCenter()
+    // player2.setSize(50, 100);
+    // player2.show
+    player2.scaleX=0.4;
+    player2.scaleY=0.4;
+    player2.setCollideWorldBounds(true);
+    this.physics.add.collider(player2, platforms);
+  }
+
+  setUpPlayer2() {
+    // player = this.physics.add.sprite(100, 100, 'p1');
+    // // player.setSize(player.width, player.height);
+    // player.scaleX=1;
+    // player.scaleY=1;
+    // player.setCollideWorldBounds(true);
+    // this.physics.add.collider(player, platforms);
   }
 
   setUpEnemy() {
-    enemy = this.physics.add.sprite(600, 800, 'brawler2');
+    enemy = this.physics.add.sprite(600, 800, 'warrior1');
     enemy.setSize(playerWidth, playerHeight);
     enemy.setOffset(15, 5);
     enemy.scaleX=2;
     enemy.scaleY=2;
     enemy.setCollideWorldBounds(true);
     this.physics.add.collider(enemy, platforms);
-    this.physics.add.collider(player, enemy);
   }
 
   setUpAnimationsPlayer() {
     this.createAnimation('walk', 'brawler', [ 0, 1, 2, 3, 4, 5 ], 8, 0);
     this.createAnimation('idle', 'brawler', [ 6, 7, 8, 9, 10 ], 6, 0);
+    this.createAnimationFromImages('newIdle', 'p1', p1Idle, 20)
+    this.createAnimationFromImages('newWalk', 'p1', p1Run, 20)
+    this.createAnimationFromImages('newPunch', 'p1', p1Attack, 20)
+    this.createAnimationFromImages('newKick', 'p1', p1Slide, 20)
+
+
+
     this.createAnimation('jumpkick', 'brawler', [ 14, 15, 16, 17, 16, 15, 14 ], 12, 0);
     this.createAnimation('punch', 'brawler', [ 12, 13, 12 ], 7, 0);
     this.createAnimation('win', 'brawler', [ 21, 22 ], 2);
@@ -246,7 +282,7 @@ export default class PlayScene extends Scene {
   setPlayerScoreCalcTimeout(msList, damagePoints, deltaX, deltaY) {
     for (let ms of msList) {
       setTimeout(() => {
-        if (Math.abs(player.x - enemy.x) < deltaX && Math.abs(player.y - enemy.y) <= deltaY && !hitEnemy && (lifePlayer > 0)) {
+        if (Math.abs(player2.x - enemy.x) < deltaX && Math.abs(player2.y - enemy.y) <= deltaY && !hitEnemy && (lifePlayer > 0)) {
           hitEnemy = true;
           if ((lifeEnemy - damagePoints) >= 0)
             lifeEnemy -= damagePoints;
@@ -264,7 +300,7 @@ export default class PlayScene extends Scene {
   setEnemyScoreCalcTimeout(msList, damagePoints, deltaX, deltaY) { 
     for (let ms of msList) {
       setTimeout(() => {
-        if (Math.abs(player.x - enemy.x) < deltaX && Math.abs(player.y - enemy.y) <= deltaY && !hitPlayer && (lifeEnemy > 0)) {
+        if (Math.abs(player2.x - enemy.x) < deltaX && Math.abs(player2.y - enemy.y) <= deltaY && !hitPlayer && (lifeEnemy > 0)) {
           hitPlayer = true;
           if ((lifePlayer - damagePoints) >= 0)
             lifePlayer -= damagePoints;
@@ -292,7 +328,7 @@ export default class PlayScene extends Scene {
 
   setUpSounds() {
     music = this.sound.add('guile', { volume: 0.2, loop: true });
-    music.play();
+    // music.play();
     fightSound = this.sound.add('fightSound', { volume: 0.2 });
     fightSound.play();
     kickSound = this.sound.add('kickSound', { volume: 0.2 });
@@ -301,21 +337,17 @@ export default class PlayScene extends Scene {
 
   setUpBackground() {
     let background = this.add.image(400, 300, 'background')
-    background.scaleX = 2;
-    background.scaleY = 1.6
+    // background.scaleX = 2;
+    // background.scaleY = 1.6
   }
 
   setUpHealthBars() {
     this.makeBar(95, 80, 610, 25, 0xff2222);
 
-    let kentFace = this.add.image(46, 70, 'kentFace');
-    kentFace.scale = 0.19;
-    let quenxiroFace = this.add.image(753, 70, 'quenxiroFace');
-    quenxiroFace.scale = 0.19;
-    healthBarPlayer = this.makeBar(375, 80, 280, 25, 0xeeee44);
-    setPlayerValuebar(healthBarPlayer, lifePlayer);
-    healthBarEnemy = this.makeBar(425, 80, 280, 25, 0xeeee44);
-    setEnemyValuebar(healthBarEnemy, lifeEnemy);
+    // let kentFace = this.add.image(46, 70, 'kentFace');
+    // kentFace.scale = 0.19;
+    // let quenxiroFace = this.add.image(753, 70, 'quenxiroFace');
+    // quenxiroFace.scale = 0.19;
   }
 
   makeBar(x, y, xSize, ySize, color) {
@@ -330,14 +362,12 @@ export default class PlayScene extends Scene {
 
   setUpTexts() {
     this.add.text(375, 77, 'K.O', { font: "bold 28px Arial", fill: "#fff"}).setShadow(2, 2, 'rgba(0,0,0,0.8)', 1);
-    this.add.text(95, 105, 'KENT', { font: "bold 24px Arial", fill: "#ea7"}).setShadow(2, 2, 'rgba(0,0,70,1)', 1);
-    this.add.text(572, 105, 'QUENXIRO', { font: "bold 24px Arial", fill: '#ea7'}).setShadow(2, 2, 'rgba(0,0,70,1)', 1);
-    scoreTextPlayer = this.add.text(100, 30, 'SCORE: 0', { font: "bold 24px Arial", fill: "#ea7"}).setShadow(2, 2, 'rgba(0,0,70,1)', 1);
+    // scoreTextPlayer = this.add.text(100, 30, 'SCORE: 0', { font: "bold 24px Arial", fill: "#ea7"}).setShadow(2, 2, 'rgba(0,0,70,1)', 1);
   }
 
   setUpPlatforms() {
     platforms = this.physics.add.staticGroup();
-    platforms.create(400, 568, 'ground').setScale(3).refreshBody();
+    platforms.create(400, 578, 'ground').setScale(2).refreshBody();
     platforms.setVisible(false);
   }
 
@@ -360,11 +390,11 @@ export default class PlayScene extends Scene {
 
   async putvideogame() {
     if (!loadedEndAnimations) {
-      await axios.put(this.parse('https://estimapi.herokuapp.com/api/data/game_sessions/token/%s', this.token), {
-        "gseScore": scorePlayer,
-        "gseLevel": level,
-        "gseIsWinner": isWinner
-      }).then(res => { console.log(res.status) });
+      // await axios.put(this.parse('https://estimapi.herokuapp.com/api/data/game_sessions/token/%s', this.token), {
+      //   "gseScore": scorePlayer,
+      //   "gseLevel": level,
+      //   "gseIsWinner": isWinner
+      // }).then(res => { console.log(res.status) });
     }
   }
 
@@ -373,6 +403,16 @@ export default class PlayScene extends Scene {
       i = 0;
 
     return str.replace(/%s/g, () => args[i++]);
+  }
+
+  createAnimationFromImages(_key, _sprite, _framesArray, _frameRate) {
+    console.log(_key)
+    this.anims.create({
+      key: _key,
+      frames: _framesArray,
+      frameRate: _frameRate,
+      repeat: false
+  });
   }
 
   createAnimation(_key, _sprite, _framesArray, _frameRate) {
@@ -436,8 +476,11 @@ export default class PlayScene extends Scene {
 
   doIdlePlayers() {
     if (!justDownPlayer) {
-      this.doAnim(player, 'idle');
-      this.stop(player);
+      // this.doAnim(player, 'idle');
+      this.doAnim(player2, 'newIdle');
+
+      this.stop(player2)
+      // this.stop(player);
     }
     if (!justDownEnemy) {
       this.doAnim(enemy, 'idle2');
@@ -454,7 +497,7 @@ export default class PlayScene extends Scene {
   }
 
   avaliableJumpIsDown(_jump) {
-    return _jump.isDown && player.body.touching.down && !justDownPlayer && (lifeEnemy > 0) && (lifePlayer > 0);
+    return _jump.isDown && player2.body.touching.down && !justDownPlayer && (lifeEnemy > 0) && (lifePlayer > 0);
   }
 
   isAnyPlayerDown() {

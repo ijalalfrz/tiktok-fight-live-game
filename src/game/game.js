@@ -15,8 +15,12 @@ function launch(containerId) {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: { y: 1200 },
-        debug: false
+        gravity: { y: 1500 },
+        debug: true,
+        overlapBias: 60,
+        tileBias: 30,
+        fps: 60,
+        fixedStep: true
       }
     },
     scene: [BootScene, PlayScene,WinScene,PauseScene,LoseScene]

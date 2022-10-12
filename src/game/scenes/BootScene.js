@@ -1,6 +1,8 @@
 import { Scene } from 'phaser'
 import sky from '@/game/assets/sky.png'
-import background from '@/game/assets/background-700x400.png'
+import background from '@/game/assets/bg1.png'
+import background2 from '@/game/assets/bg2.png'
+
 import ground from '@/game/assets/platform.png'
 import brawler from '@/game/assets/ken.png'
 import brawler2 from '@/game/assets/character3.png'
@@ -25,6 +27,8 @@ export default class BootScene extends Scene {
   }
 
   async preload () {
+    // this.load.path = "../assets/"
+    
     this.load.image('sky', sky);
     this.load.image('background', background);
     this.load.image('ground', ground);
@@ -36,15 +40,34 @@ export default class BootScene extends Scene {
     this.load.audio('punchSound', punchSound);
     this.load.spritesheet('brawler', brawler, { frameWidth: 67, frameHeight: 113 });
     this.load.spritesheet('brawler2', brawler2, { frameWidth: 67, frameHeight: 113 });
+ 
     this.load.image('kentFace', kentFace);
     this.load.image('quenxiroFace', quenxiroFace);
+    this.load.image('p1','p1/Idle__000.png')
+    this.load.image('p2','p2/Idle__000.png')
+
+    // this.load.atlas('warrior1', `characters/warrior1/Sprites/Idle.png`,`characters/warrior1/Sprites/Idle.json`)
+
+    for(var i=0;i<10;i++){
+      this.load.image(`p1Idle-${i}`,`p1/Idle__00${i}.png`)
+      this.load.image(`p1Run-${i}`,`p1/Run__00${i}.png`)
+      this.load.image(`p1Jump-${i}`,`p1/Jump__00${i}.png`)
+      this.load.image(`p1Attack-${i}`,`p1/Attack__00${i}.png`)
+      this.load.image(`p1Slide-${i}`,`p1/Slide__00${i}.png`)
+
+
+
+
+      this.load.image(`p2Idle-${i}`,`p2/Idle__00${i}.png`)
+
+    }
   }
 
   async create() {
     console.log(new URL(location.href).searchParams.get('token'));
     this.setUpImage();
     //this.addTimeEvent();
-    this.scene.start('PlayScene', { token: newToken });
+    this.scene.start('PlayScene');
   }
 
   addTimeEvent() {
@@ -58,27 +81,29 @@ export default class BootScene extends Scene {
   }
 
   async getToken() {
-    let newToken = new URL(location.href).searchParams.get('token');
+    this.scene.start('PlayScene');
 
-    await axios.put(this.parse('https://estimapi.herokuapp.com/api/data/game_sessions/token/%s', newToken), {
-      "gseScore": 0,
-      "gseLevel": 0,
-      "gseIsWinner": false
-    })
-      .then(res => {
-        this.status = res.status;
-        event = event + 1;
-      })
-      .catch((err) => console.log(err))
-      console.log(this.status)
-      console.log(this.token)
-      console.log(event)
-      if (this.status == 200 && event<=4){
-        this.scene.start('PlayScene', { token: newToken });
-      } else {
-        text = this.add.text(0, 0, "HTTP Request Failed", style);
-        text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-      }
+    // let newToken = new URL(location.href).searchParams.get('token');
+
+    // await axios.put(this.parse('https://estimapi.herokuapp.com/api/data/game_sessions/token/%s', newToken), {
+    //   "gseScore": 0,
+    //   "gseLevel": 0,
+    //   "gseIsWinner": false
+    // })
+    //   .then(res => {
+    //     this.status = res.status;
+    //     event = event + 1;
+    //   })
+    //   .catch((err) => console.log(err))
+    //   console.log(this.status)
+    //   console.log(this.token)
+    //   console.log(event)
+    //   if (this.status == 200 && event<=4){
+    //     this.scene.start('PlayScene', { token: newToken });
+    //   } else {
+    //     text = this.add.text(0, 0, "HTTP Request Failed", style);
+    //     text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+    //   }
   }
 
   parse(str) {

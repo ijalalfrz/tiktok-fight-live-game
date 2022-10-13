@@ -6,7 +6,8 @@
 </template>
 
 <script>
-
+import TikTokIOConnection from '../tiktok/wrapper'
+import  * as ttListener from '../tiktok/tiktokListener'
 export default {
   
   data() {
@@ -18,6 +19,13 @@ export default {
     }
   },
   async mounted() {
+    const beHost = 'http://localhost:8081'
+    const tiktok = new TikTokIOConnection(beHost)
+    tiktok.connect()
+
+    // listener
+    tiktok.on('like', ttListener.onLikeEventListener)
+    
     const game = await import(/* webpackChunkName: "game" */ '@/game/game')
     this.downloaded = true
     this.$nextTick(() => {

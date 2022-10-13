@@ -1,6 +1,7 @@
 import { Scene } from 'phaser'
 import axios from 'axios';
 import Player from '../player/Player';
+import eventsCenter from '../../tiktok/eventCenter';
 
 const playerWidth = 40;
 const playerHeight = 94;
@@ -47,6 +48,7 @@ export default class PlayScene extends Scene {
     super({ key: 'PlayScene' })
     this.player1 = null;
     this.player2 = null;
+    this.eventQueue = [];
   }
   async preload() {
     const characters = ['hunt1', 'king1', 'warrior1', 'warrior3', 'martial1']
@@ -56,20 +58,7 @@ export default class PlayScene extends Scene {
     const randomP2 = this.randomInteger(0, characters.length - 1)
     const cP2 = characters[randomP2]
     this.player1 = new Player(this,1, 'warrior3', 2000, 70, 70)
-    this.player2 = new Player(this,2, cP2, 50, 70, 70)
-
-    // Username of someone who is currently live
-    let tiktokUsername = "indiegoz";
-
-    // Create a new wrapper object and pass the username
-    this.tiktokLiveConnection = new WebcastPushConnection(tiktokUsername);
-
-    // Connect to the chat (await can be used as well)
-    this.tiktokLiveConnection.connect().then(state => {
-      console.info(`Connected to roomId ${state.roomId}`);
-    }).catch(err => {
-      console.error('Failed to connect', err);
-    })
+    this.player2 = new Player(this,2, cP2, 50, 70, 70)  
 
   }
 
@@ -84,12 +73,20 @@ export default class PlayScene extends Scene {
     }
   }
 
-  create () {
+  onLikeEventListener(event){
+    console.log('fired')
+    const item = {
+      type: 'like', 
+      data: event,
+    }
+    this.eventQueue.push(item);
+  }
 
-    this.tiktokLiveConnection.on('like', data => {
-      console.log(`${data.uniqueId} sent ${data.likeCount} likes, total likes: ${data.totalLikeCount}`);
-    })
-  
+  create () {
+    // event listener list
+    eventsCenter.on('like', this.onLikeEventListener, this);
+
+    // set up
     this.setUpSounds();
     this.initializeStatistics();
     this.setUpBackground();
@@ -126,6 +123,12 @@ export default class PlayScene extends Scene {
   }
 
   update() {
+    let eventItem = this.eventQueue.pop();
+
+    if (eventItem && eventItem.type == 'like') {
+      this.player1.character.attack1(this.player2)
+    }
+
     this.updatePlayersMovement(keyW, keyA, keyD, keyB, keyN, keyM);
     // this.updatePlayersFlip(player2, enemy);
     this.updateSceneNavigation();

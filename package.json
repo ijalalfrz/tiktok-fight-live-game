@@ -9,17 +9,19 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "core-js": "^3.17.3",
-    "phaser": "^3.55.2",
-    "vue": "^3.2.12",
-    "axios": "^0.24.0",
-    "express": "^4.17.1",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.2.12",
+    "axios": "^0.24.0",
+    "core-js": "^3.17.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "phaser": "^3.55.2",
     "sass": "^1.41.1",
     "sass-loader": "^8.0.2",
-    "cors": "^2.8.5"
+    "socket.io-client": "^4.5.2",
+    "tiktok-live-connector": "^1.0.1",
+    "vue": "^3.2.12"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

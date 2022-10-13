@@ -5,7 +5,17 @@ export default class Warrior3 extends BaseCharacter {
 
         super('warrior3', w, h, true, 'png')
         this.idleFrame = 10;
-        this.alias = 'Pengembala Pedang'
+        this.alias = 'Pembunuh Pedo'
+        this.aliasPosition = {
+            '1': {
+                x: 95,
+                y: 105
+            }, 
+            '2': {
+                x: 515,
+                y: 105
+            }
+        }
     }
     
     _loadIdle(scene) {
@@ -80,6 +90,29 @@ export default class Warrior3 extends BaseCharacter {
         this.createAnimation(scene, this.keyDeath, this.keyDeath, 'sprite', 6, 0, 5, 0)
 
 
+    }
+
+    // override
+    attack2(enemy) {
+		this.player.setDepth(1)
+        const damage = 20
+        this.justDownPlayer = true;
+        this.player.setVelocityY(-300);
+        this.player.anims.play(`${this.name}-attack2`, true).once('animationcomplete', () => {
+            this.justDownPlayer = false;
+            this.hitEnemy(enemy, 150, 90, damage)
+         });
+    }
+
+    attack1(enemy) {
+		this.player.setDepth(1)
+        const damage = 10
+        this.justDownPlayer = true;
+        this.player.setVelocityY(-220);
+        this.player.anims.play(`${this.name}-attack1`, true).once('animationcomplete', () => {
+            this.justDownPlayer = false;
+            this.hitEnemy(enemy, 100, 90, damage)
+         });
     }
 
 }

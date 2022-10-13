@@ -6,6 +6,16 @@ export default class Hunt1 extends BaseCharacter {
         super('hunt1', w, h, true, 'png')
         this.idleFrame = 10;
         this.alias = 'Pemburu Ababil'
+        this.aliasPosition = {
+            '1': {
+                x: 95,
+                y: 105
+            }, 
+            '2': {
+                x: 520,
+                y: 105
+            }
+        }
     }
     
     _loadIdle(scene) {
@@ -75,11 +85,23 @@ export default class Hunt1 extends BaseCharacter {
         this.createAnimation(scene, this.keyJump, this.keyJump, 'sprite', 2, 0, 1, 1)
         this.createAnimation(scene, this.keyAttack1, this.keyAttack1, 'sprite', 5, 0, 12, 0)
         this.createAnimation(scene, this.keyAttack2, this.keyAttack2, 'sprite', 5, 0, 12, 0)
-        this.createAnimation(scene, this.keyAttack3, this.keyAttack3, 'sprite', 7, 0, 10, 0)
+        this.createAnimation(scene, this.keyAttack3, this.keyAttack3, 'sprite', 7, 0, 8, 0)
         this.createAnimation(scene, this.keyHit, this.keyHit, 'sprite', 3, 0, 8, 0)
         this.createAnimation(scene, this.keyDeath, this.keyHit, 'sprite', 1, 0, 1, 0, 1)
 
 
     }
 
+    // override
+    attack3(enemy) {
+		this.player.setDepth(1)
+        this.player.setVelocityY(-350);
+        const damage = 30
+        this.justDownPlayer = true;
+        this.player.anims.play(`${this.name}-attack3`, true).once('animationcomplete', () => {
+            this.justDownPlayer = false;
+            this.hitEnemy(enemy, 150, 90, damage)
+
+        });
+    }
 }

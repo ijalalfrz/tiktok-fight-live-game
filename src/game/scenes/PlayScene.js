@@ -17,6 +17,7 @@ let keyD;
 let keyW;
 let keyM;
 let keyN;
+let keyB;
 let keyESC;
 let isWinner;
 let level;
@@ -54,8 +55,21 @@ export default class PlayScene extends Scene {
     this.removeArray(cP1, characters)
     const randomP2 = this.randomInteger(0, characters.length - 1)
     const cP2 = characters[randomP2]
-    this.player1 = new Player(this,1, cP1, 2000, 70, 70)
+    this.player1 = new Player(this,1, 'warrior3', 2000, 70, 70)
     this.player2 = new Player(this,2, cP2, 50, 70, 70)
+
+    // Username of someone who is currently live
+    let tiktokUsername = "indiegoz";
+
+    // Create a new wrapper object and pass the username
+    this.tiktokLiveConnection = new WebcastPushConnection(tiktokUsername);
+
+    // Connect to the chat (await can be used as well)
+    this.tiktokLiveConnection.connect().then(state => {
+      console.info(`Connected to roomId ${state.roomId}`);
+    }).catch(err => {
+      console.error('Failed to connect', err);
+    })
 
   }
 
@@ -71,6 +85,10 @@ export default class PlayScene extends Scene {
   }
 
   create () {
+
+    this.tiktokLiveConnection.on('like', data => {
+      console.log(`${data.uniqueId} sent ${data.likeCount} likes, total likes: ${data.totalLikeCount}`);
+    })
   
     this.setUpSounds();
     this.initializeStatistics();
@@ -108,7 +126,7 @@ export default class PlayScene extends Scene {
   }
 
   update() {
-    this.updatePlayersMovement(keyW, keyA, keyD, keyM, keyN);
+    this.updatePlayersMovement(keyW, keyA, keyD, keyB, keyN, keyM);
     // this.updatePlayersFlip(player2, enemy);
     this.updateSceneNavigation();
   }
@@ -148,12 +166,15 @@ export default class PlayScene extends Scene {
     }
   }
 
-  updatePlayersMovement(up, left, right, jumpkick, punch) {
+  updatePlayersMovement(up, left, right, attack1, attack2, attack3) {
 
-    if (this.player1.avaliableHitJustDown(punch)) {
+    if (this.player1.avaliableHitJustDown(attack1)) {
       this.player1.character.attack1(this.player2)
     }
-    if (this.player1.avaliableHitJustDown(jumpkick)) {
+    if (this.player1.avaliableHitJustDown(attack2)) {
+      this.player1.character.attack2(this.player2)
+    }
+    if (this.player1.avaliableHitJustDown(attack3)) {
       this.player1.character.attack3(this.player2)
     }
 
@@ -336,9 +357,12 @@ export default class PlayScene extends Scene {
   }
 
   setUpBackground() {
-    let background = this.add.image(400, 300, 'background')
-    // background.scaleX = 2;
-    // background.scaleY = 1.6
+    const bg = this.randomInteger(1,2)
+    let background = this.add.image(400, 300, `background${bg}`)
+    if (bg == 2) {
+      background.scaleX = 2;
+      background.scaleY = 1.6
+    }
   }
 
   setUpHealthBars() {
@@ -377,6 +401,8 @@ export default class PlayScene extends Scene {
     keyD = this.addInputKey(Phaser.Input.Keyboard.KeyCodes.D);
     keyM = this.addInputKey(Phaser.Input.Keyboard.KeyCodes.M);
     keyN = this.addInputKey(Phaser.Input.Keyboard.KeyCodes.N);
+    keyB = this.addInputKey(Phaser.Input.Keyboard.KeyCodes.B);
+
     keyESC = this.addInputKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 

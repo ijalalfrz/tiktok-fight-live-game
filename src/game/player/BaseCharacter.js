@@ -127,6 +127,8 @@ export default class BaseCharacter {
     }
 
     attack3(enemy) {
+		this.player.setDepth(1)
+
         const damage = 30
         this.justDownPlayer = true;
         this.player.anims.play(`${this.name}-attack3`, true).once('animationcomplete', () => {

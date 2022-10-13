@@ -30,7 +30,9 @@ export default class BootScene extends Scene {
     // this.load.path = "../assets/"
     
     this.load.image('sky', sky);
-    this.load.image('background', background);
+    this.load.image('background1', background);
+    this.load.image('background2', background2);
+
     this.load.image('ground', ground);
     this.load.audio('guile', theme);
     this.load.audio('fightSound', fightSound);

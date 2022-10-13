@@ -6,6 +6,16 @@ export default class Warrior1 extends BaseCharacter {
         super('warrior1', w, h, true, 'png')
         this.idleFrame = 10;
         this.alias = 'Kapten Aladin'
+        this.aliasPosition = {
+            '1': {
+                x: 95,
+                y: 105
+            }, 
+            '2': {
+                x: 540,
+                y: 105
+            }
+        }
     }
     
     _loadIdle(scene) {

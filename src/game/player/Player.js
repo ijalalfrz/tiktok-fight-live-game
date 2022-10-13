@@ -15,7 +15,8 @@ export default class Player {
     }
 
     showAliasText(scene, x, y) {
-        scene.add.text(x, y, this.character.alias, { font: "bold 24px Arial", fill: "#ea7"}).setShadow(2, 2, 'rgba(0,0,70,1)', 1);
+
+        scene.add.text(this.character.aliasPosition[this.playerNum].x, this.character.aliasPosition[this.playerNum].y, this.character.alias, { font: "bold 24px Arial", fill: "#ea7"}).setShadow(2, 2, 'rgba(0,0,70,1)', 1);
     } 
 
     setUpHealthBar(scene, x, y) {

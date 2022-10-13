@@ -6,6 +6,16 @@ export default class King1 extends BaseCharacter {
         super('king1', w, h, true, 'png')
         this.idleFrame = 10;
         this.alias = 'Raja Singa'
+        this.aliasPosition = {
+            '1': {
+                x: 95,
+                y: 105
+            }, 
+            '2': {
+                x: 582,
+                y: 105
+            }
+        }
     }
     
     _loadIdle(scene) {

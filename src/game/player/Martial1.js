@@ -6,6 +6,16 @@ export default class Martial1 extends BaseCharacter {
         super('martial1', w, h, true, 'png')
         this.idleFrame = 10;
         this.alias = 'Joko Kendils'
+        this.aliasPosition = {
+            '1': {
+                x: 95,
+                y: 105
+            }, 
+            '2': {
+                x: 555,
+                y: 105
+            }
+        }
     }
     
     _loadIdle(scene) {
@@ -61,7 +71,7 @@ export default class Martial1 extends BaseCharacter {
         this.keyWalk = this._loadWalk(scene)
         this.keyAttack1 = this._loadAttack1(scene)
         this.keyAttack2 = this._loadAttack2(scene)
-        // this.keyAttack3 = this._loadAttack3(scene)
+        this.keyAttack3 = this._loadAttack3(scene)
         this.keyIdle = this._loadIdle(scene)
         this.keyJump = this._loadJump(scene)
         this.keyHit = this._loadHit(scene)
@@ -75,7 +85,7 @@ export default class Martial1 extends BaseCharacter {
         this.createAnimation(scene, this.keyJump, this.keyJump, 'sprite', 2, 0, 1, 1)
         this.createAnimation(scene, this.keyAttack1, this.keyAttack1, 'sprite', 6, 0, 12, 0)
         this.createAnimation(scene, this.keyAttack2, this.keyAttack2, 'sprite', 6, 0, 12, 0)
-        // this.createAnimation(scene, this.keyAttack3, this.keyAttack3, 'sprite', 8, 0, 10, 0)
+        this.createAnimation(scene, this.keyAttack3, this.keyAttack3, 'sprite', 8, 0, 10, 0)
         this.createAnimation(scene, this.keyHit, this.keyHit, 'sprite', 3, 0, 8, 0)
         this.createAnimation(scene, this.keyDeath, this.keyDeath, 'sprite', 6, 0, 5, 0)
 

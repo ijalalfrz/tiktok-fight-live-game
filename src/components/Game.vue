@@ -20,11 +20,13 @@ export default {
   },
   async mounted() {
     const beHost = 'http://localhost:8081'
-    const tiktok = new TikTokIOConnection(beHost)
-    tiktok.connect()
+    // const tiktok = new TikTokIOConnection(beHost)
+    // tiktok.connect()
 
     // listener
-    tiktok.on('like', ttListener.onLikeEventListener)
+    // tiktok.on('like', ttListener.onLikeEventListener)
+    // tiktok.on('chat', ttListener.onCommentEventListener)
+
     
     const game = await import(/* webpackChunkName: "game" */ '@/game/game')
     this.downloaded = true

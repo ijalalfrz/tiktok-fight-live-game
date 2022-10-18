@@ -6,3 +6,10 @@ export function onLikeEventListener(like) {
     eventsCenter.emit('like', like);
 }
 
+export function onCommentEventListener(comment) {
+    console.log(comment);
+    eventsCenter.emit('comment', comment);
+}
+
+
+

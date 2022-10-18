@@ -4,6 +4,8 @@ import PlayScene from '@/game/scenes/PlayScene'
 import WinScene from '@/game/scenes/WinScene'
 import PauseScene from '@/game/scenes/PauseScene'
 import LoseScene from '@/game/scenes/LoseScene'
+import CharacterScene from '@/game/scenes/CharacterScene'
+
 
 
 function launch(containerId) {
@@ -23,7 +25,7 @@ function launch(containerId) {
         fixedStep: true
       }
     },
-    scene: [BootScene, PlayScene,WinScene,PauseScene,LoseScene]
+    scene: [BootScene,CharacterScene, PlayScene,WinScene,PauseScene,LoseScene]
   })
 }
 

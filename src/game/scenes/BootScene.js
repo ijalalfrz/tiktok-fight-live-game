@@ -69,7 +69,9 @@ export default class BootScene extends Scene {
     console.log(new URL(location.href).searchParams.get('token'));
     this.setUpImage();
     //this.addTimeEvent();
-    this.scene.start('PlayScene');
+    // this.scene.start('PlayScene');
+    this.scene.start('CharacterScene');
+
   }
 
   addTimeEvent() {

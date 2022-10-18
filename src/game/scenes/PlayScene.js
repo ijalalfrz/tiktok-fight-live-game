@@ -49,16 +49,26 @@ export default class PlayScene extends Scene {
     this.player1 = null;
     this.player2 = null;
     this.eventQueue = [];
+    this.p1Char = null;
+    this.p2Char = null;
   }
-  async preload() {
-    const characters = ['hunt1', 'king1', 'warrior1', 'warrior3', 'martial1']
-    const randomP1 = this.randomInteger(0, characters.length - 1)
-    const cP1 = characters[randomP1]
-    this.removeArray(cP1, characters)
-    const randomP2 = this.randomInteger(0, characters.length - 1)
-    const cP2 = characters[randomP2]
-    this.player1 = new Player(this,1, 'warrior3', 2000, 70, 70)
-    this.player2 = new Player(this,2, cP2, 50, 70, 70)  
+
+  init(data){
+    this.p1Char = data.character.p1;
+    this.p2Char = data.character.p2;
+
+  }
+
+  preload() {
+    // console.log(this.p1Char)
+    // const characters = ['hunt1', 'king1', 'warrior1', 'warrior3', 'martial1']
+    // const randomP1 = this.randomInteger(0, characters.length - 1)
+    // const cP1 = characters[randomP1]
+    // this.removeArray(cP1, characters)
+    // const randomP2 = this.randomInteger(0, characters.length - 1)
+    // const cP2 = characters[randomP2]
+    this.player1 = new Player(this,1, this.p1Char, 2000, 70, 70)
+    this.player2 = new Player(this,2, this.p2Char, 50, 70, 70)  
 
   }
 
@@ -82,7 +92,7 @@ export default class PlayScene extends Scene {
     this.eventQueue.push(item);
   }
 
-  create () {
+  create (data) {
     // event listener list
     eventsCenter.on('like', this.onLikeEventListener, this);
 
@@ -116,10 +126,6 @@ export default class PlayScene extends Scene {
 
 
 
-  }
-
-  init(data){
-    this.token = data.token;
   }
 
   update() {
